@@ -1,23 +1,57 @@
-import logo from './logo.svg';
+
 import './App.css';
+import {  Form, Formik } from 'formik';
+import { validationSchema } from './validations/schemas';
+import { useRef } from 'react';
+import PreviewImage from './component/PreviewImage';
+import KErrorMessage from './component/KErrorMessage';
 
 function App() {
+
+  const fileRef = useRef(null)
+
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Formik
+        validationSchema={validationSchema}
+        initialValues={{
+         file:"",
+        }}
+        onSubmit={(values) => {
+          console.log(values);
+        }}
+      >
+        {({ values, setFieldValue }) => (
+          
+          <Form>
+
+            <input 
+            ref={fileRef}
+            hidden
+            type="file"
+            accept='images/*' 
+            onChange={(event) => {
+              setFieldValue("file", event.target.files[0])
+            }} />
+
+            <KErrorMessage name="file"/>
+
+           {values.file &&  <PreviewImage file={values.file}/>} 
+            <button onClick={() => {
+              fileRef.current.click()
+            }}>
+              Upload
+            </button>
+
+
+            
+
+            <button type="submit">Submit</button>
+          </Form>
+
+        )}
+      </Formik>
     </div>
   );
 }
